@@ -8,7 +8,7 @@ from telegram.ext import (
     CallbackQueryHandler, ConversationHandler, filters, ContextTypes
 )
 
-TOKEN = os.environ.get("BOT_TOKEN", "TU_TOKEN_AQUI")
+TOKEN = os.environ["BOT_TOKEN"]
 DB_PATH = "finanzas.db"
 
 CATEGORIAS = [
@@ -456,4 +456,5 @@ def main():
 
 
 if __name__ == "__main__":
+
     main()
