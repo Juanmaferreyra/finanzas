@@ -8,13 +8,7 @@ from telegram.ext import (
     CallbackQueryHandler, ConversationHandler, filters, ContextTypes
 )
 
-import os
-TOKEN = os.environ.get("BOT_TOKEN")
-print("Variables disponibles:", list(os.environ.keys()))
-print("TOKEN:", TOKEN)
-if not TOKEN:
-    raise ValueError("BOT_TOKEN no encontrado en variables de entorno")
-DB_PATH = "finanzas.db"
+TOKEN = "8460702598:AAHvebY7D9HdBkeoAdeOTK5nx1JuYIoIAms"
 
 CATEGORIAS = [
     "🏠 Vivienda / Alquiler","🛒 Comida / Supermercado","🚗 Transporte",
@@ -463,4 +457,5 @@ def main():
 if __name__ == "__main__":
 
     main()
+
 
