@@ -125,54 +125,39 @@ select option { background:var(--bg2); }
 .confirm-title { font-family:var(--mono); font-size:0.65rem; color:var(--gray); text-transform:uppercase; letter-spacing:1px; margin-bottom:10px; }
 .confirm-box p { font-family:var(--mono); font-size:0.82rem; color:var(--white); margin-bottom:20px; line-height:1.7; white-space:pre-line; }
 .confirm-actions { display:flex; gap:10px; justify-content:flex-end; }
-
+/* ── PRESUPUESTOS ── */
+.presup-item { margin-bottom:16px; padding-bottom:16px; border-bottom:1px solid var(--border); }
+.presup-item:last-child { border-bottom:none; margin-bottom:0; padding-bottom:0; }
+.presup-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:5px; }
+.presup-cat { font-size:0.85rem; font-weight:500; }
+.presup-estado { font-family:var(--mono); font-size:0.68rem; }
+.presup-nums { display:flex; justify-content:space-between; font-family:var(--mono); font-size:0.68rem; color:var(--gray); margin-bottom:5px; flex-wrap:wrap; gap:4px; }
+.presup-bar-wrap { background:var(--bg4); border-radius:4px; height:8px; overflow:hidden; margin-bottom:3px; }
+.presup-bar { height:100%; border-radius:4px; transition:width 0.5s ease; }
+.presup-pct { font-family:var(--mono); font-size:0.6rem; color:var(--gray); text-align:right; }
 /* ── SNAPSHOT DETALLE ── */
-.snap-row-header {
-  cursor:pointer;
-  transition: background 0.15s;
-}
+.snap-row-header { cursor:pointer; transition:background 0.15s; }
 .snap-row-header:hover td { background:rgba(80,250,123,0.05) !important; }
-.snap-toggle {
-  font-family:var(--mono); font-size:0.75rem;
-  color:var(--green); transition:transform 0.2s;
-  display:inline-block; width:16px;
-}
+.snap-toggle { font-family:var(--mono); font-size:0.75rem; color:var(--green); transition:transform 0.2s; display:inline-block; width:16px; }
 .snap-toggle.open { transform:rotate(90deg); }
 .snap-detail-row { display:none; }
 .snap-detail-row.open { display:table-row; }
-.snap-detail-box {
-  background:var(--bg3);
-  border:1px solid var(--border);
-  border-radius:8px;
-  padding:16px;
-  margin:4px 0 8px 0;
-}
+.snap-detail-box { background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:16px; margin:4px 0 8px 0; }
 .snap-detail-tabs { display:flex; gap:0; margin-bottom:14px; border-bottom:1px solid var(--border); }
-.snap-dtab {
-  font-family:var(--mono); font-size:0.7rem; padding:7px 14px;
-  cursor:pointer; color:var(--gray); border-bottom:2px solid transparent;
-  transition:all 0.15s;
-}
+.snap-dtab { font-family:var(--mono); font-size:0.7rem; padding:7px 14px; cursor:pointer; color:var(--gray); border-bottom:2px solid transparent; transition:all 0.15s; }
 .snap-dtab:hover { color:var(--white); }
 .snap-dtab.active { color:var(--cyan); border-bottom-color:var(--cyan); }
 .snap-panel { display:none; }
 .snap-panel.active { display:block; }
-.snap-kpi-row {
-  display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:14px;
-}
-.snap-kpi {
-  background:var(--bg4); border-radius:8px; padding:12px;
-  font-family:var(--mono);
-}
+.snap-kpi-row { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:14px; }
+.snap-kpi { background:var(--bg4); border-radius:8px; padding:12px; font-family:var(--mono); }
 .snap-kpi .sk-label { font-size:0.58rem; color:var(--gray); text-transform:uppercase; letter-spacing:1px; margin-bottom:4px; }
 .snap-kpi .sk-value { font-size:1rem; font-weight:700; }
-
 @media(max-width:1000px){ .kpi-grid{grid-template-columns:repeat(3,1fr);} .snap-kpi-row{grid-template-columns:1fr 1fr;} }
 @media(max-width:700px){ .kpi-grid{grid-template-columns:1fr 1fr;} .grid-2,.grid-3{grid-template-columns:1fr;} .page{padding:14px;} header,.tabs{padding-left:14px;padding-right:14px;} .snap-kpi-row{grid-template-columns:1fr 1fr;} }
 </style>
 </head>
 <body>
-
 <header>
   <div class="header-logo">
     <div class="logo-icon">💰</div>
@@ -184,7 +169,6 @@ select option { background:var(--bg2); }
     <button class="btn-save" onclick="guardarEnArchivo()">[ 💾 guardar archivo ]</button>
   </div>
 </header>
-
 <div class="tabs">
   <div class="tab active" onclick="showTab('resumen',this)">resumen</div>
   <div class="tab" onclick="showTab('ingresos',this)">ingresos</div>
@@ -230,11 +214,17 @@ select option { background:var(--bg2); }
     </div>
     <div class="card"><div class="card-title">distribución del ingreso</div><div class="chart-wrap"><canvas id="chart-donut"></canvas></div></div>
   </div>
+  <!-- PRESUPUESTOS -->
+  <div class="card mb" id="card-presupuestos" style="display:none">
+    <div class="card-title">presupuestos del mes — progreso</div>
+    <div style="font-family:var(--mono);font-size:0.62rem;color:var(--gray);margin-bottom:14px">// Definí los presupuestos por categoría en la pestaña <span style="color:var(--cyan)">gastos</span> — columna "presupuesto mes"</div>
+    <div id="lista-presupuestos"></div>
+  </div>
   <div class="card">
     <div class="card-title">gastos por categoría</div>
     <div class="table-wrap">
       <table id="tabla-resumen-gastos">
-        <thead><tr><th>categoría</th><th>monto</th><th>% ingreso</th><th>registros</th><th>distribución</th></tr></thead>
+        <thead><tr><th>categoría</th><th>gastado</th><th>presupuesto</th><th>estado</th><th>% ingreso</th><th>registros</th><th>distribución</th></tr></thead>
         <tbody></tbody>
       </table>
     </div>
@@ -283,8 +273,9 @@ select option { background:var(--bg2); }
     </div>
   </div>
   <div class="card">
-    <div class="card-title">gastos por categoría</div>
-    <div class="table-wrap"><table><thead><tr><th>categoría</th><th>monto total</th><th>% ingreso</th><th>acciones</th></tr></thead><tbody id="tabla-gastos"></tbody></table></div>
+    <div class="card-title">gastos por categoría — escribí el presupuesto mensual en la última columna</div>
+    <div style="font-family:var(--mono);font-size:0.62rem;color:var(--gray);margin-bottom:10px">// El presupuesto es variable por mes. Se refleja automáticamente en el Resumen con barras de progreso.</div>
+    <div class="table-wrap"><table><thead><tr><th>categoría</th><th>monto total</th><th>% ingreso</th><th>presupuesto mes (ARS)</th><th>acciones</th></tr></thead><tbody id="tabla-gastos"></tbody></table></div>
     <div class="total-row"><span class="total-label">total</span><span style="font-family:var(--mono);font-size:1rem;font-weight:700;color:var(--red)" id="total-gastos-label">$0,00</span></div>
   </div>
 </div>
@@ -395,7 +386,6 @@ select option { background:var(--bg2); }
     </div>
   </div>
 </div>
-
 <div class="toast" id="toast"></div>
 <script id="datos-guardados" type="application/json">null</script>
 <script>
@@ -408,11 +398,10 @@ let state={
   ingresos:[{nombre:"Salario / Sueldo neto",monto:0},{nombre:"Trabajo extra / Freelance",monto:0},{nombre:"Retorno de inversión",monto:0},{nombre:"Alquiler cobrado",monto:0},{nombre:"Otros ingresos",monto:0}],
   categorias:[...CATS_DEFAULT], gastos:{}, registros:[],
   cuentas:{"Cuenta corriente":{ars:0,usd:0},"Caja de ahorro ARS":{ars:0,usd:0},"Caja de ahorro USD":{ars:0,usd:0},"Billetera virtual":{ars:0,usd:0},"Efectivo":{ars:0,usd:0},"Inversiones":{ars:0,usd:0}},
-  pctAhorro:0, snapshots:[]
+  pctAhorro:0, snapshots:[], presupuestos:{}
 };
 
 function initGastos(){ state.categorias.forEach(c=>{ if(!(c in state.gastos)) state.gastos[c]=0; }); }
-
 function gastosReales(){
   const real={};
   state.categorias.forEach(c=>{ real[c]=+state.gastos[c]||0; });
@@ -421,10 +410,22 @@ function gastosReales(){
 }
 function totalGastosReales(){ return Object.values(gastosReales()).reduce((s,v)=>s+v,0); }
 
+// ── PRESUPUESTOS ──────────────────────────────────────────────────────────
+const keyPresupuesto=()=>{ const h=new Date(); return `${h.getFullYear()}-${String(h.getMonth()+1).padStart(2,'0')}`; };
+const presupuestoMes=()=>state.presupuestos[keyPresupuesto()]||{};
+function setPresupuesto(cat,val){
+  const k=keyPresupuesto();
+  if(!state.presupuestos[k]) state.presupuestos[k]={};
+  const v=+val||0;
+  if(v===0) delete state.presupuestos[k][cat];
+  else state.presupuestos[k][cat]=v;
+  autoGuardar(); renderAll();
+}
+
 // ── PERSISTENCIA ──────────────────────────────────────────────────────────
 function cargarDatos(){
-  try{ const emb=document.getElementById("datos-guardados").textContent.trim(); if(emb&&emb!=="null"){ state={...state,...JSON.parse(emb)}; initGastos(); return; } }catch(e){}
-  try{ const ls=localStorage.getItem("finanzas_v9"); if(ls) state={...state,...JSON.parse(ls)}; }catch(e){}
+  try{ const emb=document.getElementById("datos-guardados").textContent.trim(); if(emb&&emb!=="null"){ state={...state,...JSON.parse(emb)}; if(!state.presupuestos) state.presupuestos={}; initGastos(); return; } }catch(e){}
+  try{ const ls=localStorage.getItem("finanzas_v9"); if(ls){ const d=JSON.parse(ls); state={...state,...d}; if(!state.presupuestos) state.presupuestos={}; } }catch(e){}
   initGastos();
 }
 function autoGuardar(){
@@ -448,7 +449,6 @@ const fmt=n=>"$"+Number(n||0).toLocaleString("es-AR",{minimumFractionDigits:2,ma
 const totalIngresos=()=>state.ingresos.reduce((s,i)=>s+(+i.monto||0),0);
 const balance=()=>totalIngresos()-totalGastosReales();
 const montoAhorro=()=>totalIngresos()*state.pctAhorro/100;
-
 function showToast(msg){ const t=document.getElementById("toast"); t.textContent=msg; t.classList.add("show"); setTimeout(()=>t.classList.remove("show"),3000); }
 function poblarSelects(){
   ["gasto-cat","reg-cat","filtro-cat"].forEach(id=>{
@@ -464,7 +464,6 @@ function resetTodosIngresos(){ state.ingresos.forEach(i=>i.monto=0); autoGuardar
 function resetTodosGastos(){ state.categorias.forEach(c=>state.gastos[c]=0); autoGuardar(); renderAll(); showToast("✓ todos los gastos en $0"); }
 function resetIngreso(idx){ abrirConfirm(`¿Ponés en $0 "${state.ingresos[idx].nombre}"?`,()=>{ state.ingresos[idx].monto=0; autoGuardar(); renderAll(); showToast("✓ en $0"); }); }
 function resetGasto(idx){ const cat=state.categorias[idx]; abrirConfirm(`¿Ponés en $0 el gasto manual de\n"${cat}"?`,()=>{ state.gastos[state.categorias[idx]]=0; autoGuardar(); renderAll(); showToast("✓ en $0"); }); }
-
 function showTab(id,el){ document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active")); document.querySelectorAll(".page").forEach(p=>p.classList.remove("active")); document.getElementById("page-"+id).classList.add("active"); if(el) el.classList.add("active"); renderAll(); }
 
 // ── AHORRO ────────────────────────────────────────────────────────────────
@@ -489,8 +488,8 @@ function renderHealth(){
   segs.forEach((s,i)=>{s.style.background=i<nivel?color:"var(--bg4)";});
 }
 
-// ── RENDER ────────────────────────────────────────────────────────────────
-function renderAll(){ poblarSelects(); renderKPIs(); renderHealth(); renderTablaIngresos(); renderTablaGastos(); renderTablaRegistros(); renderTablaCuentas(); renderTablaResumenGastos(); renderEvolucion(); renderCharts(); }
+// ── RENDER ALL ────────────────────────────────────────────────────────────
+function renderAll(){ poblarSelects(); renderKPIs(); renderHealth(); renderTablaIngresos(); renderTablaGastos(); renderTablaRegistros(); renderTablaCuentas(); renderTablaResumenGastos(); renderPresupuestos(); renderEvolucion(); renderCharts(); }
 
 function renderKPIs(){
   const ti=totalIngresos(),tg=totalGastosReales(),bal=balance(),aho=montoAhorro(),rest=ti-tg-aho;
@@ -533,14 +532,17 @@ function renderTablaIngresos(){
 }
 
 function renderTablaGastos(){
-  const ti=totalIngresos(); const reales=gastosReales();
+  const ti=totalIngresos(); const reales=gastosReales(); const pres=presupuestoMes();
   document.getElementById("tabla-gastos").innerHTML=state.categorias.map((cat,ci)=>{
     const total=reales[cat]||0; const manual=state.gastos[cat]||0;
     const deReg=state.registros.filter(r=>r.cat===cat).reduce((s,r)=>s+(+r.monto||0),0);
+    const presupVal=pres[cat]||0;
+    const catEsc=cat.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
     return `<tr>
       <td>${cat}</td>
       <td><div class="mono" style="font-size:0.9rem;font-weight:600;text-align:right">${fmt(total)}</div>${deReg>0?`<div style="font-family:var(--mono);font-size:0.58rem;color:var(--gray)">manual: ${fmt(manual)} + hist: ${fmt(deReg)}</div>`:""}</td>
       <td class="mono" style="color:var(--gray);font-size:0.78rem">${ti>0?((total/ti)*100).toFixed(1):0}%</td>
+      <td><input type="number" class="mono" value="${presupVal||''}" style="width:150px;text-align:right;padding:4px 8px;border-color:${presupVal>0?'var(--purple)':'var(--border2)'}" min="0" placeholder="sin límite" onchange="setPresupuesto('${catEsc}',this.value)"></td>
       <td style="display:flex;gap:6px;flex-wrap:wrap">
         <button class="btn-reset-row" onclick="resetGasto(${ci})">↺ $0</button>
         ${!CATS_DEFAULT.includes(cat)?`<button class="btn-danger" onclick="eliminarCategoria(${ci})">✕</button>`:""}
@@ -569,164 +571,124 @@ function renderTablaCuentas(){
 }
 
 function renderTablaResumenGastos(){
-  const ti=totalIngresos(); const reales=gastosReales();
+  const ti=totalIngresos(); const reales=gastosReales(); const pres=presupuestoMes();
   const tbody=document.querySelector("#tabla-resumen-gastos tbody");
   const entries=Object.entries(reales).filter(([,v])=>v>0).sort((a,b)=>b[1]-a[1]);
-  if(!entries.length){ tbody.innerHTML=`<tr><td colspan="5" style="text-align:center;color:var(--gray);padding:18px;font-family:var(--mono);font-size:0.72rem">// sin gastos registrados</td></tr>`; return; }
+  if(!entries.length){ tbody.innerHTML=`<tr><td colspan="7" style="text-align:center;color:var(--gray);padding:18px;font-family:var(--mono);font-size:0.72rem">// sin gastos registrados</td></tr>`; return; }
   const max=Math.max(...entries.map(([,v])=>v));
-  tbody.innerHTML=entries.map(([cat,val],i)=>{ const count=state.registros.filter(r=>r.cat===cat).length; return `<tr><td>${cat}</td><td class="mono" style="text-align:right">${fmt(val)}</td><td class="mono" style="text-align:right;color:var(--gray);font-size:0.78rem">${ti>0?(val/ti*100).toFixed(1):0}%</td><td><span class="badge badge-cyan">${count} reg.</span></td><td style="min-width:120px"><div class="progress-wrap"><div class="progress-bar" style="width:${max>0?(val/max*100):0}%;background:${CAT_COLORS[i%CAT_COLORS.length]}"></div></div></td></tr>`; }).join("");
+  tbody.innerHTML=entries.map(([cat,val],i)=>{
+    const count=state.registros.filter(r=>r.cat===cat).length;
+    const presupVal=pres[cat]||0;
+    let presupCell='<span style="color:var(--gray);font-family:var(--mono);font-size:0.72rem">—</span>';
+    let estadoCell='<span style="color:var(--gray);font-family:var(--mono);font-size:0.7rem">sin presupuesto</span>';
+    if(presupVal>0){
+      const pct=Math.min(100,(val/presupVal*100));
+      const color=pct>=100?"var(--red)":pct>=80?"var(--orange)":pct>=60?"var(--yellow)":"var(--green)";
+      const restante=presupVal-val;
+      presupCell=`<span class="mono" style="color:var(--purple)">${fmt(presupVal)}</span>`;
+      estadoCell=`<div style="min-width:140px">
+        <div style="display:flex;justify-content:space-between;font-family:var(--mono);font-size:0.6rem;color:var(--gray);margin-bottom:3px">
+          <span style="color:${color}">${pct.toFixed(0)}%</span>
+          <span style="color:${restante>=0?'var(--green)':'var(--red)'}">${restante>=0?'resta '+fmt(restante):'exceso '+fmt(Math.abs(restante))}</span>
+        </div>
+        <div class="presup-bar-wrap" style="height:6px"><div class="presup-bar" style="width:${pct.toFixed(1)}%;background:${color}"></div></div>
+      </div>`;
+    }
+    return `<tr>
+      <td>${cat}</td>
+      <td class="mono" style="text-align:right">${fmt(val)}</td>
+      <td>${presupCell}</td>
+      <td>${estadoCell}</td>
+      <td class="mono" style="text-align:right;color:var(--gray);font-size:0.78rem">${ti>0?(val/ti*100).toFixed(1):0}%</td>
+      <td><span class="badge badge-cyan">${count} reg.</span></td>
+      <td style="min-width:100px"><div class="progress-wrap"><div class="progress-bar" style="width:${max>0?(val/max*100):0}%;background:${CAT_COLORS[i%CAT_COLORS.length]}"></div></div></td>
+    </tr>`;
+  }).join("");
 }
 
-// ── EVOLUCIÓN + DETALLE ───────────────────────────────────────────────────
+// ── PRESUPUESTOS DASHBOARD ────────────────────────────────────────────────
+function renderPresupuestos(){
+  const pres=presupuestoMes();
+  const cats=Object.keys(pres).filter(c=>pres[c]>0);
+  const reales=gastosReales();
+  const card=document.getElementById("card-presupuestos");
+  const lista=document.getElementById("lista-presupuestos");
+  if(!cats.length){ card.style.display="none"; return; }
+  card.style.display="block";
+  cats.sort((a,b)=>{
+    const pA=pres[a]>0?(reales[a]||0)/pres[a]:0;
+    const pB=pres[b]>0?(reales[b]||0)/pres[b]:0;
+    return pB-pA;
+  });
+  lista.innerHTML=cats.map(cat=>{
+    const presup=pres[cat]||0;
+    const gastado=reales[cat]||0;
+    const pct=presup>0?Math.min(100,(gastado/presup*100)):0;
+    const restante=presup-gastado;
+    const color=pct>=100?"var(--red)":pct>=80?"var(--orange)":pct>=60?"var(--yellow)":"var(--green)";
+    const estado=pct>=100?`⚠️ SUPERADO (+${fmt(Math.abs(restante))})`:pct>=80?`🟠 ${pct.toFixed(0)}% — cuidado`:pct>=60?`🟡 ${pct.toFixed(0)}% — en curso`:`🟢 ${pct.toFixed(0)}% — bien`;
+    return `<div class="presup-item">
+      <div class="presup-header">
+        <span class="presup-cat">${cat}</span>
+        <span class="presup-estado" style="color:${color}">${estado}</span>
+      </div>
+      <div class="presup-nums">
+        <span>gastado: <strong style="color:${color}">${fmt(gastado)}</strong></span>
+        <span>presupuesto: <strong style="color:var(--purple)">${fmt(presup)}</strong></span>
+        <span>${restante>=0?`resta: <strong style="color:var(--green)">${fmt(restante)}</strong>`:`exceso: <strong style="color:var(--red)">${fmt(Math.abs(restante))}</strong>`}</span>
+      </div>
+      <div class="presup-bar-wrap"><div class="presup-bar" style="width:${pct.toFixed(1)}%;background:${color}"></div></div>
+      <div class="presup-pct">${pct.toFixed(1)}% del presupuesto utilizado</div>
+    </div>`;
+  }).join("");
+}
+
+// ── EVOLUCIÓN ─────────────────────────────────────────────────────────────
 function guardarSnapshot(){
   const mes=parseInt(document.getElementById("snap-mes").value);
   const anio=parseInt(document.getElementById("snap-anio").value)||new Date().getFullYear();
   const ti=totalIngresos(), tg=totalGastosReales(), bal=balance(), aho=montoAhorro();
   const key=`${anio}-${String(mes).padStart(2,"0")}`;
-
-  // Guardamos copia profunda de ingresos y registros del momento
-  const snap={
-    key, mes, anio,
-    nombre: MESES_NOMBRES[mes]+" "+anio,
-    ingresos: ti, gastos: tg, balance: bal, ahorro: aho, pctAhorro: state.pctAhorro,
-    // Detalle completo para poder explorar después
-    detalle_ingresos: JSON.parse(JSON.stringify(state.ingresos)),
-    detalle_registros: JSON.parse(JSON.stringify(state.registros)),
-    detalle_gastos_manuales: JSON.parse(JSON.stringify(state.gastos)),
-    detalle_categorias: JSON.parse(JSON.stringify(state.categorias))
-  };
-
+  const snap={ key, mes, anio, nombre:MESES_NOMBRES[mes]+" "+anio, ingresos:ti, gastos:tg, balance:bal, ahorro:aho, pctAhorro:state.pctAhorro, detalle_ingresos:JSON.parse(JSON.stringify(state.ingresos)), detalle_registros:JSON.parse(JSON.stringify(state.registros)), detalle_gastos_manuales:JSON.parse(JSON.stringify(state.gastos)), detalle_categorias:JSON.parse(JSON.stringify(state.categorias)) };
   const idx=state.snapshots.findIndex(s=>s.key===key);
   if(idx>=0) state.snapshots[idx]=snap; else state.snapshots.push(snap);
   state.snapshots.sort((a,b)=>a.key.localeCompare(b.key));
   autoGuardar(); renderAll(); showToast("📸 snapshot guardado: "+snap.nombre);
 }
-
-function toggleSnapDetalle(key){
-  const headerRow=document.getElementById("snap-hdr-"+key);
-  const detailRow=document.getElementById("snap-det-"+key);
-  const toggle=document.getElementById("snap-tog-"+key);
-  if(!detailRow) return;
-  const isOpen=detailRow.classList.contains("open");
-  detailRow.classList.toggle("open",!isOpen);
-  toggle.classList.toggle("open",!isOpen);
-}
-
-function switchSnapTab(key, panel){
-  ["gastos","ingresos","registros"].forEach(p=>{
-    document.getElementById(`snap-tab-${key}-${p}`).classList.toggle("active", p===panel);
-    document.getElementById(`snap-panel-${key}-${p}`).classList.toggle("active", p===panel);
-  });
-}
+function toggleSnapDetalle(key){ const d=document.getElementById("snap-det-"+key); const t=document.getElementById("snap-tog-"+key); if(!d) return; const o=d.classList.contains("open"); d.classList.toggle("open",!o); t.classList.toggle("open",!o); }
+function switchSnapTab(key,panel){ ["gastos","ingresos","registros"].forEach(p=>{ document.getElementById(`snap-tab-${key}-${p}`).classList.toggle("active",p===panel); document.getElementById(`snap-panel-${key}-${p}`).classList.toggle("active",p===panel); }); }
 
 function renderEvolucion(){
   const tbody=document.getElementById("tabla-evolucion"); if(!tbody) return;
-  if(!state.snapshots.length){
-    tbody.innerHTML=`<tr><td colspan="8" style="text-align:center;color:var(--gray);padding:20px;font-family:var(--mono);font-size:0.72rem">// sin datos — guardá un snapshot del mes actual</td></tr>`;
-  } else {
-    const rows=[...state.snapshots].reverse().map(s=>{
-      const idx=state.snapshots.indexOf(s);
-      const balColor=s.balance>=0?"var(--yellow)":"var(--red)";
-
-      // Calcular gastos reales del snapshot
-      const snapGastosReales={};
-      (s.detalle_categorias||[]).forEach(c=>{ snapGastosReales[c]=+(s.detalle_gastos_manuales||{})[c]||0; });
-      (s.detalle_registros||[]).forEach(r=>{ snapGastosReales[r.cat]=(snapGastosReales[r.cat]||0)+(+r.monto||0); });
-      const gastosEntries=Object.entries(snapGastosReales).filter(([,v])=>v>0).sort((a,b)=>b[1]-a[1]);
-      const maxG=gastosEntries.length?Math.max(...gastosEntries.map(([,v])=>v)):1;
-
-      // Panel gastos por categoría
-      const panelGastos=`
-        <div class="snap-kpi-row">
-          <div class="snap-kpi"><div class="sk-label">total gastos</div><div class="sk-value" style="color:var(--red)">${fmt(s.gastos)}</div></div>
-          <div class="snap-kpi"><div class="sk-label">total ingresos</div><div class="sk-value" style="color:var(--green)">${fmt(s.ingresos)}</div></div>
-          <div class="snap-kpi"><div class="sk-label">balance</div><div class="sk-value" style="color:${balColor}">${fmt(s.balance)}</div></div>
-          <div class="snap-kpi"><div class="sk-label">ahorro meta</div><div class="sk-value" style="color:var(--cyan)">${fmt(s.ahorro)} (${s.pctAhorro.toFixed(1)}%)</div></div>
-        </div>
-        ${gastosEntries.length ? `<table style="width:100%"><thead><tr><th>categoría</th><th>monto</th><th>% del gasto</th><th>distribución</th></tr></thead><tbody>
-          ${gastosEntries.map(([cat,val])=>`<tr>
-            <td style="font-size:0.82rem">${cat}</td>
-            <td class="mono" style="color:var(--red);text-align:right">${fmt(val)}</td>
-            <td class="mono" style="color:var(--gray);font-size:0.75rem;text-align:right">${s.gastos>0?(val/s.gastos*100).toFixed(1):0}%</td>
-            <td style="min-width:100px"><div class="progress-wrap"><div class="progress-bar" style="width:${(val/maxG*100).toFixed(1)}%;background:var(--red)"></div></div></td>
-          </tr>`).join("")}
-        </tbody></table>` : `<div style="color:var(--gray);font-family:var(--mono);font-size:0.72rem;padding:12px 0">// sin gastos en este mes</div>`}`;
-
-      // Panel ingresos
-      const snapTotalIng=(s.detalle_ingresos||[]).reduce((a,i)=>a+(+i.monto||0),0);
-      const panelIngresos=`
-        <div class="snap-kpi-row">
-          <div class="snap-kpi"><div class="sk-label">total ingresos</div><div class="sk-value" style="color:var(--green)">${fmt(s.ingresos)}</div></div>
-          <div class="snap-kpi"><div class="sk-label">fuentes</div><div class="sk-value" style="color:var(--cyan)">${(s.detalle_ingresos||[]).filter(i=>i.monto>0).length}</div></div>
-        </div>
-        ${(s.detalle_ingresos||[]).some(i=>i.monto>0) ? `<table style="width:100%"><thead><tr><th>fuente</th><th>monto</th><th>% del total</th></tr></thead><tbody>
-          ${(s.detalle_ingresos||[]).filter(i=>i.monto>0).map(i=>`<tr>
-            <td style="font-size:0.82rem">${i.nombre}</td>
-            <td class="mono" style="color:var(--green);text-align:right">${fmt(i.monto)}</td>
-            <td class="mono" style="color:var(--gray);font-size:0.75rem;text-align:right">${snapTotalIng>0?(i.monto/snapTotalIng*100).toFixed(1):0}%</td>
-          </tr>`).join("")}
-        </tbody></table>` : `<div style="color:var(--gray);font-family:var(--mono);font-size:0.72rem;padding:12px 0">// sin ingresos registrados en este mes</div>`}`;
-
-      // Panel registros detallados
-      const regsSnap=(s.detalle_registros||[]).slice().reverse();
-      const panelRegistros=regsSnap.length ? `
-        <table style="width:100%"><thead><tr><th>fecha</th><th>descripción</th><th>categoría</th><th>monto</th><th>pago</th><th>notas</th></tr></thead><tbody>
-          ${regsSnap.map(r=>`<tr>
-            <td class="mono" style="color:var(--gray);font-size:0.72rem">${r.fecha}</td>
-            <td style="font-size:0.8rem">${r.desc}</td>
-            <td style="font-size:0.75rem">${r.cat}</td>
-            <td class="mono" style="color:var(--red);text-align:right">${fmt(r.monto)}</td>
-            <td><span class="badge ${PAGO_BADGE[r.pago]||'badge-cyan'}" style="font-size:0.58rem">${r.pago}</span></td>
-            <td style="color:var(--gray);font-size:0.72rem">${r.notas||""}</td>
-          </tr>`).join("")}
-        </tbody></table>` : `<div style="color:var(--gray);font-family:var(--mono);font-size:0.72rem;padding:12px 0">// sin registros individuales en este mes</div>`;
-
-      const detailHTML=`
-        <td colspan="8" style="padding:0 8px 8px 32px">
-          <div class="snap-detail-box">
-            <div class="snap-detail-tabs">
-              <div class="snap-dtab active" id="snap-tab-${s.key}-gastos" onclick="switchSnapTab('${s.key}','gastos')">📊 gastos por categoría</div>
-              <div class="snap-dtab" id="snap-tab-${s.key}-ingresos" onclick="switchSnapTab('${s.key}','ingresos')">💰 ingresos</div>
-              <div class="snap-dtab" id="snap-tab-${s.key}-registros" onclick="switchSnapTab('${s.key}','registros')">📝 registros (${(s.detalle_registros||[]).length})</div>
-            </div>
-            <div class="snap-panel active" id="snap-panel-${s.key}-gastos">${panelGastos}</div>
-            <div class="snap-panel" id="snap-panel-${s.key}-ingresos">${panelIngresos}</div>
-            <div class="snap-panel" id="snap-panel-${s.key}-registros">${panelRegistros}</div>
-          </div>
-        </td>`;
-
-      return `
-        <tr class="snap-row-header" id="snap-hdr-${s.key}" onclick="toggleSnapDetalle('${s.key}')">
-          <td><span class="snap-toggle" id="snap-tog-${s.key}">▶</span></td>
-          <td class="mono" style="color:var(--cyan);font-weight:600">${s.nombre}</td>
-          <td class="mono" style="color:var(--green);text-align:right">${fmt(s.ingresos)}</td>
-          <td class="mono" style="color:var(--red);text-align:right">${fmt(s.gastos)}</td>
-          <td class="mono" style="color:${balColor};text-align:right">${fmt(s.balance)}</td>
-          <td class="mono" style="color:var(--cyan);text-align:right">${fmt(s.ahorro)}</td>
-          <td class="mono" style="color:var(--purple);text-align:right">${s.pctAhorro.toFixed(1)}%</td>
-          <td onclick="event.stopPropagation()"><button class="btn-danger" onclick="eliminarSnapshot(${idx})">✕</button></td>
-        </tr>
-        <tr class="snap-detail-row" id="snap-det-${s.key}"><td colspan="8" style="padding:0"><table style="width:100%"><tbody><tr>${detailHTML}</tr></tbody></table></td></tr>`;
-    });
-    tbody.innerHTML=rows.join("");
+  if(!state.snapshots.length){ tbody.innerHTML=`<tr><td colspan="8" style="text-align:center;color:var(--gray);padding:20px;font-family:var(--mono);font-size:0.72rem">// sin datos — guardá un snapshot del mes actual</td></tr>`; }
+  else {
+    tbody.innerHTML=[...state.snapshots].reverse().map(s=>{
+      const idx=state.snapshots.indexOf(s); const bc=s.balance>=0?"var(--yellow)":"var(--red)";
+      const sgr={}; (s.detalle_categorias||[]).forEach(c=>{sgr[c]=+(s.detalle_gastos_manuales||{})[c]||0;}); (s.detalle_registros||[]).forEach(r=>{sgr[r.cat]=(sgr[r.cat]||0)+(+r.monto||0);});
+      const ge=Object.entries(sgr).filter(([,v])=>v>0).sort((a,b)=>b[1]-a[1]); const mg=ge.length?Math.max(...ge.map(([,v])=>v)):1;
+      const pG=`<div class="snap-kpi-row"><div class="snap-kpi"><div class="sk-label">total gastos</div><div class="sk-value" style="color:var(--red)">${fmt(s.gastos)}</div></div><div class="snap-kpi"><div class="sk-label">total ingresos</div><div class="sk-value" style="color:var(--green)">${fmt(s.ingresos)}</div></div><div class="snap-kpi"><div class="sk-label">balance</div><div class="sk-value" style="color:${bc}">${fmt(s.balance)}</div></div><div class="snap-kpi"><div class="sk-label">ahorro meta</div><div class="sk-value" style="color:var(--cyan)">${fmt(s.ahorro)} (${s.pctAhorro.toFixed(1)}%)</div></div></div>${ge.length?`<table style="width:100%"><thead><tr><th>categoría</th><th>monto</th><th>% gasto</th><th>distrib.</th></tr></thead><tbody>${ge.map(([c,v])=>`<tr><td style="font-size:0.82rem">${c}</td><td class="mono" style="color:var(--red);text-align:right">${fmt(v)}</td><td class="mono" style="color:var(--gray);font-size:0.75rem;text-align:right">${s.gastos>0?(v/s.gastos*100).toFixed(1):0}%</td><td style="min-width:100px"><div class="progress-wrap"><div class="progress-bar" style="width:${(v/mg*100).toFixed(1)}%;background:var(--red)"></div></div></td></tr>`).join("")}</tbody></table>`:`<div style="color:var(--gray);font-family:var(--mono);font-size:0.72rem;padding:12px 0">// sin gastos</div>`}`;
+      const sti=(s.detalle_ingresos||[]).reduce((a,i)=>a+(+i.monto||0),0);
+      const pI=`<div class="snap-kpi-row"><div class="snap-kpi"><div class="sk-label">total ingresos</div><div class="sk-value" style="color:var(--green)">${fmt(s.ingresos)}</div></div><div class="snap-kpi"><div class="sk-label">fuentes</div><div class="sk-value" style="color:var(--cyan)">${(s.detalle_ingresos||[]).filter(i=>i.monto>0).length}</div></div></div>${(s.detalle_ingresos||[]).some(i=>i.monto>0)?`<table style="width:100%"><thead><tr><th>fuente</th><th>monto</th><th>%</th></tr></thead><tbody>${(s.detalle_ingresos||[]).filter(i=>i.monto>0).map(i=>`<tr><td style="font-size:0.82rem">${i.nombre}</td><td class="mono" style="color:var(--green);text-align:right">${fmt(i.monto)}</td><td class="mono" style="color:var(--gray);font-size:0.75rem;text-align:right">${sti>0?(i.monto/sti*100).toFixed(1):0}%</td></tr>`).join("")}</tbody></table>`:`<div style="color:var(--gray);font-family:var(--mono);font-size:0.72rem;padding:12px 0">// sin ingresos</div>`}`;
+      const rr=(s.detalle_registros||[]).slice().reverse();
+      const pR=rr.length?`<table style="width:100%"><thead><tr><th>fecha</th><th>descripción</th><th>categoría</th><th>monto</th><th>pago</th><th>notas</th></tr></thead><tbody>${rr.map(r=>`<tr><td class="mono" style="color:var(--gray);font-size:0.72rem">${r.fecha}</td><td style="font-size:0.8rem">${r.desc}</td><td style="font-size:0.75rem">${r.cat}</td><td class="mono" style="color:var(--red);text-align:right">${fmt(r.monto)}</td><td><span class="badge ${PAGO_BADGE[r.pago]||'badge-cyan'}" style="font-size:0.58rem">${r.pago}</span></td><td style="color:var(--gray);font-size:0.72rem">${r.notas||""}</td></tr>`).join("")}</tbody></table>`:`<div style="color:var(--gray);font-family:var(--mono);font-size:0.72rem;padding:12px 0">// sin registros</div>`;
+      return `<tr class="snap-row-header" id="snap-hdr-${s.key}" onclick="toggleSnapDetalle('${s.key}')"><td><span class="snap-toggle" id="snap-tog-${s.key}">▶</span></td><td class="mono" style="color:var(--cyan);font-weight:600">${s.nombre}</td><td class="mono" style="color:var(--green);text-align:right">${fmt(s.ingresos)}</td><td class="mono" style="color:var(--red);text-align:right">${fmt(s.gastos)}</td><td class="mono" style="color:${bc};text-align:right">${fmt(s.balance)}</td><td class="mono" style="color:var(--cyan);text-align:right">${fmt(s.ahorro)}</td><td class="mono" style="color:var(--purple);text-align:right">${s.pctAhorro.toFixed(1)}%</td><td onclick="event.stopPropagation()"><button class="btn-danger" onclick="eliminarSnapshot(${idx})">✕</button></td></tr>
+      <tr class="snap-detail-row" id="snap-det-${s.key}"><td colspan="8" style="padding:0"><table style="width:100%"><tbody><tr><td colspan="8" style="padding:0 8px 8px 32px"><div class="snap-detail-box"><div class="snap-detail-tabs"><div class="snap-dtab active" id="snap-tab-${s.key}-gastos" onclick="switchSnapTab('${s.key}','gastos')">📊 gastos</div><div class="snap-dtab" id="snap-tab-${s.key}-ingresos" onclick="switchSnapTab('${s.key}','ingresos')">💰 ingresos</div><div class="snap-dtab" id="snap-tab-${s.key}-registros" onclick="switchSnapTab('${s.key}','registros')">📝 registros (${(s.detalle_registros||[]).length})</div></div><div class="snap-panel active" id="snap-panel-${s.key}-gastos">${pG}</div><div class="snap-panel" id="snap-panel-${s.key}-ingresos">${pI}</div><div class="snap-panel" id="snap-panel-${s.key}-registros">${pR}</div></div></td></tr></tbody></table></td></tr>`;
+    }).join("");
   }
   renderChartEvolucion();
 }
-
 function eliminarSnapshot(idx){ if(!confirm("¿Eliminar este mes?")) return; state.snapshots.splice(idx,1); autoGuardar(); renderAll(); showToast("✓ eliminado"); }
 
 // ── CHARTS ────────────────────────────────────────────────────────────────
 let charts={};
 Chart.defaults.color="#6272A4"; Chart.defaults.borderColor="#383855";
 Chart.defaults.font.family="'JetBrains Mono',monospace"; Chart.defaults.font.size=11;
-
 function renderChartEvolucion(){
   const ctx=document.getElementById("chart-evolucion"); if(!ctx) return;
   if(charts.evo) charts.evo.destroy(); if(!state.snapshots.length) return;
   const s=[...state.snapshots].sort((a,b)=>a.key.localeCompare(b.key));
   charts.evo=new Chart(ctx,{type:"line",data:{labels:s.map(x=>x.nombre),datasets:[{label:"Ingresos",data:s.map(x=>x.ingresos),borderColor:"#50FA7B",backgroundColor:"rgba(80,250,123,0.08)",tension:0.4,fill:true,pointRadius:4},{label:"Gastos",data:s.map(x=>x.gastos),borderColor:"#FF5555",backgroundColor:"rgba(255,85,85,0.08)",tension:0.4,fill:true,pointRadius:4},{label:"Ahorro",data:s.map(x=>x.ahorro),borderColor:"#8BE9FD",backgroundColor:"rgba(139,233,253,0.08)",tension:0.4,fill:false,pointRadius:4,borderDash:[4,4]}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:"#6272A4",font:{size:11}}}},scales:{x:{ticks:{color:"#6272A4"},grid:{color:"#383855"}},y:{ticks:{color:"#6272A4",callback:v=>"$"+Number(v).toLocaleString("es-AR")},grid:{color:"#383855"}}}}});
 }
-
 function renderCharts(){
   const reales=gastosReales(); const labels=state.categorias; const data=labels.map(c=>reales[c]||0);
   const ti=totalIngresos(),tg=totalGastosReales(),bal=balance(),aho=montoAhorro(),libre=Math.max(0,ti-tg-aho);
