@@ -9,6 +9,7 @@ from telegram.ext import (
 )
 
 TOKEN = "8460702598:AAHvebY7D9HdBkeoAdeOTK5nx1JuYIoIAms"
+DB_PATH = "finanzas.db"
 
 CATEGORIAS = [
     "🏠 Vivienda / Alquiler","🛒 Comida / Supermercado","🚗 Transporte",
@@ -457,5 +458,6 @@ def main():
 if __name__ == "__main__":
 
     main()
+
 
 
