@@ -377,7 +377,7 @@ async def callback_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         if not rows:
             await query.edit_message_text("No hay registros este mes.")
             return
-        lineas = [f"{'💸' if r[6]=='gasto' else '💰'} {r[0]} — {r[1][:25]} — *${r[3]:,.0f}*" for r in rows]
+        lineas = [f"{'💸' if r[6]=='gasto' else '💰'} *{r[0]}* — {r[1][:25]} — *${r[3]:,.0f}* — {r[4]}" for r in rows]
         await query.edit_message_text("📋 *Últimos registros:*\n\n" + "\n".join(lineas), parse_mode="Markdown")
 
     elif data == "menu:ayuda":
@@ -458,6 +458,7 @@ def main():
 if __name__ == "__main__":
 
     main()
+
 
 
 
